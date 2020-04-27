@@ -1,0 +1,43 @@
+
+
+
+                    LAPORAN STOK BARANG
+
+      Kode    Nama Bara     Harga      Jumlah       Subt
+
+  KD01        Penghapus    3000        7            21000
+
+  KD02        Penggaris    4000        5            20000
+
+  KD03        HVS F4       67000       5            335000
+
+  KD04        Pulpen       1500        12           18000
+
+  KD05        Senar Gita   4000        12           48000
+
+                                       Grand Tot    442000
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

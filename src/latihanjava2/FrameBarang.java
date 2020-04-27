@@ -4,27 +4,64 @@
  */
 package latihanjava2;
 
-import java.awt.HeadlessException;
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.ResultSet;
 import javax.swing.JOptionPane;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
  * @author ACER
  */
 public class FrameBarang extends javax.swing.JFrame {
-String objKategori[]={"Alat Tulis","Kertas","Buku","ATK"};
-    private Statement stat;
-    /**
-     * Creates new form FrameBarang
-     */
+private Statement stat;
+    private ResultSet rs;
+    DefaultTableModel model;
+    private String judulKolom[]={"No","Kode Barang","Nama Barang","Kategori","Satuan","Harga","Jumlah"};
+    private String[][] dataBarang;
+    String objKategori[]={"Alat Tulis","Kertas","Buku","ATK"};
+    private void setModeltabel(){
+    model=new DefaultTableModel(dataBarang,judulKolom);
+    tblbarang.setModel(model);
+    }
+    
     public FrameBarang() {
         initComponents();
-        for (String object:objKategori){
-            cbkategori.addItem(object);
-        }
+        setModeltabel();
+        view_data();
+        tblbarang.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
+                @Override
+                public void valueChanged(ListSelectionEvent e){
+                    int row=tblbarang.getSelectedRow();
+                    if(row!=-1){
+                        String tKode=(tblbarang.getModel().getValueAt(row,1).toString());
+                        String tNama=(tblbarang.getModel().getValueAt(row,2).toString());
+                        String tKategori=(tblbarang.getModel().getValueAt(row,3).toString());
+                        String tSatuan=(tblbarang.getModel().getValueAt(row,4).toString());
+                        String tHarga=(tblbarang.getModel().getValueAt(row,5).toString());
+                        String tJumlah=(tblbarang.getModel().getValueAt(row,6).toString());
+                        
+                        txtkode.setText(tKode);
+                        txtnamabarang.setText(tNama);
+                        txtharga.setText(tHarga);
+                        txtjumlah.setText(tJumlah);
+                        btnubah.setEnabled(true);
+                        btnhapus.setEnabled(true);
+                        btnsimpan.setEnabled(false);
+                        
+                        cbkategori.setSelectedItem(tKategori);
+                        if(tSatuan.equals("pcs")){
+                            rbpcs.setSelected(true);
+                        }else if(tSatuan.equals("box")){
+                            rbbox.setSelected(true);
+                        }else{
+                            rbrim.setSelected(true);
+                        }
+                    }
+                }});
     }
 
     /**
@@ -36,6 +73,7 @@ String objKategori[]={"Alat Tulis","Kertas","Buku","ATK"};
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        buttonGroup1 = new javax.swing.ButtonGroup();
         rbbox = new javax.swing.JRadioButton();
         rbrim = new javax.swing.JRadioButton();
         cbkategori = new javax.swing.JComboBox();
@@ -45,27 +83,34 @@ String objKategori[]={"Alat Tulis","Kertas","Buku","ATK"};
         txtkode = new javax.swing.JTextField();
         txtnamabarang = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
-        btnbatal = new javax.swing.JButton();
         jLabel6 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        btnsimpan = new javax.swing.JButton();
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tblbarang = new javax.swing.JTable();
+        btnbatal = new javax.swing.JButton();
+        btnsimpan = new javax.swing.JButton();
+        btnubah = new javax.swing.JButton();
+        btnhapus = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(255, 204, 51));
 
+        buttonGroup1.add(rbbox);
         rbbox.setFont(new java.awt.Font("Comic Sans MS", 0, 18)); // NOI18N
         rbbox.setText("box");
 
+        buttonGroup1.add(rbrim);
         rbrim.setFont(new java.awt.Font("Comic Sans MS", 0, 18)); // NOI18N
         rbrim.setText("rim");
 
         cbkategori.setFont(new java.awt.Font("Comic Sans MS", 0, 18)); // NOI18N
-        cbkategori.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "---PILIH KATEGORI---" }));
+        cbkategori.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "---PILIH KATEGORI---", "Alat Tulis", "Kertas", "Buku", "ATK" }));
 
+        buttonGroup1.add(rbpcs);
         rbpcs.setFont(new java.awt.Font("Comic Sans MS", 0, 18)); // NOI18N
         rbpcs.setText("pcs");
 
@@ -95,14 +140,6 @@ String objKategori[]={"Alat Tulis","Kertas","Buku","ATK"};
         jLabel2.setFont(new java.awt.Font("Comic Sans MS", 0, 18)); // NOI18N
         jLabel2.setText("Kode Barang          :");
 
-        btnbatal.setFont(new java.awt.Font("Comic Sans MS", 0, 18)); // NOI18N
-        btnbatal.setText("Batal");
-        btnbatal.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnbatalActionPerformed(evt);
-            }
-        });
-
         jLabel6.setFont(new java.awt.Font("Comic Sans MS", 0, 18)); // NOI18N
         jLabel6.setText("Harga                    :");
 
@@ -115,7 +152,35 @@ String objKategori[]={"Alat Tulis","Kertas","Buku","ATK"};
         jLabel3.setFont(new java.awt.Font("Comic Sans MS", 0, 18)); // NOI18N
         jLabel3.setText("Nama Barang         :");
 
-        btnsimpan.setFont(new java.awt.Font("Comic Sans MS", 0, 18)); // NOI18N
+        jLabel7.setFont(new java.awt.Font("Comic Sans MS", 0, 18)); // NOI18N
+        jLabel7.setText("Jumlah                  :");
+
+        jLabel8.setFont(new java.awt.Font("Comic Sans MS", 1, 18)); // NOI18N
+        jLabel8.setText("FORM BARANG");
+
+        tblbarang.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        tblbarang.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane1.setViewportView(tblbarang);
+
+        btnbatal.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        btnbatal.setText("Batal");
+        btnbatal.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnbatalActionPerformed(evt);
+            }
+        });
+
+        btnsimpan.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         btnsimpan.setText("Simpan");
         btnsimpan.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -123,11 +188,21 @@ String objKategori[]={"Alat Tulis","Kertas","Buku","ATK"};
             }
         });
 
-        jLabel7.setFont(new java.awt.Font("Comic Sans MS", 0, 18)); // NOI18N
-        jLabel7.setText("Jumlah                  :");
+        btnubah.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        btnubah.setText("Ubah");
+        btnubah.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnubahActionPerformed(evt);
+            }
+        });
 
-        jLabel8.setFont(new java.awt.Font("Comic Sans MS", 1, 18)); // NOI18N
-        jLabel8.setText("FORM BARANG");
+        btnhapus.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        btnhapus.setText("Hapus");
+        btnhapus.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnhapusActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -153,14 +228,18 @@ String objKategori[]={"Alat Tulis","Kertas","Buku","ATK"};
                                     .addComponent(jLabel6))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(txtharga)
+                                    .addComponent(txtjumlah)
                                     .addGroup(layout.createSequentialGroup()
-                                        .addGap(289, 289, 289)
+                                        .addGap(113, 113, 113)
                                         .addComponent(btnsimpan, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(btnbatal, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(0, 2, Short.MAX_VALUE))
-                                    .addComponent(txtharga)
-                                    .addComponent(txtjumlah)))))
+                                        .addComponent(btnbatal, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(btnhapus)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(btnubah, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(0, 0, Short.MAX_VALUE))))))
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -177,6 +256,10 @@ String objKategori[]={"Alat Tulis","Kertas","Buku","ATK"};
                 .addGap(294, 294, 294)
                 .addComponent(jLabel8)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 670, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -209,11 +292,15 @@ String objKategori[]={"Alat Tulis","Kertas","Buku","ATK"};
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel7)
                     .addComponent(txtjumlah, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(53, 53, 53)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnsimpan)
-                    .addComponent(btnbatal))
-                .addContainerGap(34, Short.MAX_VALUE))
+                    .addComponent(btnubah)
+                    .addComponent(btnhapus)
+                    .addComponent(btnbatal)
+                    .addComponent(btnsimpan))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(80, Short.MAX_VALUE))
         );
 
         pack();
@@ -234,7 +321,7 @@ String objKategori[]={"Alat Tulis","Kertas","Buku","ATK"};
             evt.consume();
         }
     }//GEN-LAST:event_txthargaKeyTyped
-
+ 
     private void txtjumlahKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtjumlahKeyTyped
         // TODO add your handling code here:
         char cDigit=evt.getKeyChar();
@@ -247,19 +334,6 @@ String objKategori[]={"Alat Tulis","Kertas","Buku","ATK"};
         }
     }//GEN-LAST:event_txtjumlahKeyTyped
 
-    private void btnbatalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnbatalActionPerformed
-        // TODO add your handling code here:
-      txtkode.setText("");
-      txtnamabarang.setText("");
-      txtharga.setText("");
-      txtjumlah.setText("");
-      cbkategori.setSelectedIndex(0);
-      rbpcs.setSelected(false);
-      rbbox.setSelected(false);
-      rbrim.setSelected(false);
-      txtkode.requestFocus();
-    }//GEN-LAST:event_btnbatalActionPerformed
-
     private void btnsimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnsimpanActionPerformed
         // TODO add your handling code here:
         String satuan;
@@ -271,8 +345,10 @@ String objKategori[]={"Alat Tulis","Kertas","Buku","ATK"};
             satuan="rim";
         }
         try{
-            koneksi objkoneksi = new koneksi();
-            Connection con=objkoneksi.bukakoneksi();
+            koneksi objkoneksi;
+            objkoneksi = new koneksi();
+            Connection con;
+            con = objkoneksi.bukakoneksi();
             String sql="INSERT INTO barang VALUES ('"+txtkode.getText()+"','"+txtnamabarang.getText()+"','"+cbkategori.getSelectedItem()+"','"+satuan+"','"+txtharga.getText()+"','"+txtjumlah.getText()+"')";
             stat=con.createStatement();
             stat.execute(sql);
@@ -289,11 +365,96 @@ String objKategori[]={"Alat Tulis","Kertas","Buku","ATK"};
             txtkode.requestFocus();
 
         }
-        catch (SQLException | HeadlessException e)
+        catch (Exception e)
         {
             System.out.println("gagal="+e.getMessage());
         }
     }//GEN-LAST:event_btnsimpanActionPerformed
+
+    private void btnbatalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnbatalActionPerformed
+        // TODO add your handling code here:
+        awal();
+    }//GEN-LAST:event_btnbatalActionPerformed
+   private void view_data(){
+    model.getDataVector().removeAllElements();
+    try{
+        int no=1;
+        String sql="SELECT * from barang";
+        koneksi objkoneksi=new koneksi();
+        Connection con=objkoneksi.bukakoneksi();
+        stat=con.createStatement();
+        rs=stat.executeQuery(sql);
+        while(rs.next()){
+            model.addRow(new Object[]{no++,rs.getString(1),rs.getString(2),rs.getString(3),rs.getString(4),rs.getString(5),rs.getString(6)});
+        }
+    }catch (Exception e){
+        }
+
+}
+     private void awal(){
+        txtkode.setText("");
+        txtnamabarang.setText("");
+        txtjumlah.setText("");
+        cbkategori.setSelectedIndex(0);
+        rbpcs.setSelected(false);
+        rbbox.setSelected(false);
+        rbrim.setSelected(false);
+        txtkode.requestFocus();
+        }
+    
+    private void btnubahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnubahActionPerformed
+        // TODO add your handling code here:
+        if(cbkategori.getSelectedIndex()!=0){
+            String satuan;
+            if(rbpcs.isSelected()){
+                satuan="pcs";
+            }else if(rbbox.isSelected()){
+                satuan="box";
+            }else if(rbrim.isSelected()){
+                satuan="rim";
+            }else{
+                satuan=null;
+            }
+            try{
+                koneksi objkoneksi=new koneksi();
+                Connection con=objkoneksi.bukakoneksi();
+                String sql="UPDATE barang SET namabarang='"+txtnamabarang.getText()+"',kategori='"+cbkategori.getSelectedItem()+"',"
+                + "satuan='"+satuan+"',harga='"+txtharga.getText()+"',jumlah='"+txtjumlah.getText()+"'where kodebarang='"+txtkode.getText()+"'";
+                stat=con.createStatement();
+                stat.executeUpdate(sql);
+
+                javax.swing.JOptionPane.showMessageDialog(null, "Data Berhasil Diubah");
+                awal();
+                view_data();
+            }
+            catch (Exception e)
+            {
+                System.out.println("gagal="+e.getMessage());
+            }
+        }else{
+            JOptionPane.showMessageDialog(null,"Plih Kategori Barang","notifikasi",2);
+        }
+
+    }//GEN-LAST:event_btnubahActionPerformed
+
+    private void btnhapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnhapusActionPerformed
+        // TODO add your handling code here:
+        try{
+            koneksi objkoneksi=new koneksi();
+            Connection con=objkoneksi.bukakoneksi();
+            String sql="DELETE from barang WHERE kodebarang='"+txtkode.getText()+"'";
+            stat=con.createStatement();
+            stat.executeUpdate(sql);
+
+            JOptionPane.showMessageDialog(null,"Data Berhasil Dihapus");
+            awal();
+            view_data();
+        }
+        catch (Exception e)
+        {
+            System.out.println("gagal="+e.getMessage());
+        }
+    }//GEN-LAST:event_btnhapusActionPerformed
 
     /**
      * @param args the command line arguments
@@ -326,7 +487,10 @@ String objKategori[]={"Alat Tulis","Kertas","Buku","ATK"};
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnbatal;
+    private javax.swing.JButton btnhapus;
     private javax.swing.JButton btnsimpan;
+    private javax.swing.JButton btnubah;
+    private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JComboBox cbkategori;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -335,9 +499,11 @@ String objKategori[]={"Alat Tulis","Kertas","Buku","ATK"};
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JRadioButton rbbox;
     private javax.swing.JRadioButton rbpcs;
     private javax.swing.JRadioButton rbrim;
+    private javax.swing.JTable tblbarang;
     private javax.swing.JTextField txtharga;
     private javax.swing.JTextField txtjumlah;
     private javax.swing.JTextField txtkode;
